@@ -5,9 +5,9 @@ function scalePixelListToAxes(canvas_size, axes_size) {
 	var [min_axes_x, max_axes_x, min_axes_y, max_axes_y] = axes_size;
 	var axes_width = max_axes_x - min_axes_x;
 	var axes_height = max_axes_y - min_axes_y;
-	scaledPixels = [];
+	let scaledPixels = [];
 	for (var y = 0; y < max_pixel_y; y++) {
-		row = [];
+		let row = [];
 		for (var x = 0; x < max_pixel_x; x++) {
 			row.push([(x / max_pixel_x) * axes_width + min_axes_x, (y / max_pixel_y) * axes_height + min_axes_y]);
 		}
@@ -18,8 +18,9 @@ function scalePixelListToAxes(canvas_size, axes_size) {
 
 function drawPoints(point_colours, canvas) {
 	const ctx = canvas.getContext('2d');
-	var imageData = ctx.createImageData(CANVAS_WIDTH, CANVAS_HEIGHT);
-	arr_i = 0
+	var imageData = ctx.createImageData(canvas.width, canvas.height);
+	let arr_i = 0
+	console.log(point_colours);
 
 	point_colours.forEach(function(colour_row) {
 		colour_row.forEach(function(colour) {
