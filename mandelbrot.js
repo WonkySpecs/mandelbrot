@@ -46,27 +46,25 @@ var Mandelbrot = (function() {
 	}
 
 	return { 
-		calcPointColours: function(points) {
+		calcPointColours: function(points, colourMapper) {
 			colours = [];
 			max_iterations = 100;
 			points.forEach(function(point_row) {
 				colour_row = [];
 				point_row.forEach(function(point) {
 					let it = iterationsToEscape(point, max_iterations);
-					let colour = ColourMapper.apply(it, max_iterations);
+					let colour = colourMapper.apply(it, max_iterations);
 					colour_row.push(colour);
 				});
 				colours.push(colour_row);
 			});
 			return colours;
 		}};
-
 })();
 
 var Drawing = (function() {
 	return {
-		drawPoints: function(point_colours) {
-			const canvas = document.getElementById('canvas');
+		drawPoints: function(point_colours, canvas) {
 			const ctx = canvas.getContext('2d');
 			var imageData = ctx.createImageData(CANVAS_WIDTH, CANVAS_HEIGHT);
 			arr_i = 0
@@ -101,4 +99,7 @@ var Drawing = (function() {
 	};
 })();
 
-Drawing.drawPoints(Mandelbrot.calcPointColours(Drawing.scalePixelListToAxes([CANVAS_WIDTH, CANVAS_HEIGHT], [MIN_X, MAX_X, MIN_Y, MAX_Y])));
+const scaledPoints = Drawing.scalePixelListToAxes([CANVAS_WIDTH, CANVAS_HEIGHT], [MIN_X, MAX_X, MIN_Y, MAX_Y]);
+const pointColours = Mandelbrot.calcPointColours(scaledPoints, ColourMapper)
+const canvas = document.getElementById('canvas');
+Drawing.drawPoints(pointColours, canvas);
