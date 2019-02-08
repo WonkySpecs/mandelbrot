@@ -20,7 +20,6 @@ function drawPoints(point_colours, canvas) {
 	const ctx = canvas.getContext('2d');
 	var imageData = ctx.createImageData(canvas.width, canvas.height);
 	let arr_i = 0
-	console.log(point_colours);
 
 	point_colours.forEach(function(colour_row) {
 		colour_row.forEach(function(colour) {

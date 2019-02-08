@@ -1,5 +1,5 @@
-import * as drawing from "./drawing.js";
-import * as mandelbrot from "./mandelbrot.js";
+import * as drawing from "./modules/drawing.js";
+import * as mandelbrot from "./modules/mandelbrot.js";
 
 const MIN_X = -2.15
 const MAX_X = 1
