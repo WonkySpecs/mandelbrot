@@ -1,18 +1,19 @@
 export { calcPointColours }
 
-var iterationsToEscape = function(point, max_iterations) {
+var escapeTime = function(point, maxIterations) {
 	let counter = 0;
 	let r = point[0];
 	let i = point[1];
 	let z = [r, i];
-	while(counter < max_iterations) {
+	while(counter < maxIterations && !(z[0] ** 2 + z[1] ** 2 > 4)) {
 		z = apply_f(z, point);
-		if(z[0] ** 2 + z[1] ** 2 > 4) {
-			return counter;
-		}
 		counter += 1;
 	}
-	return max_iterations;
+	return [counter, z];
+}
+
+var iterationsToEscape = function(point, maxIterations) {
+	return escapeTime(point, maxIterations)[0];
 }
 
 var apply_f = function(z, c) {
@@ -31,13 +32,19 @@ var complex_add = function(c1, c2) {
 
 function calcPointColours(points, colourMapping) {
 	let colours = [];
-	let max_iterations = 100;
+	let maxIterations = 100;
 	points.forEach(function(point_row) {
 		let colour_row = [];
 		point_row.forEach(function(point) {
-			let it = iterationsToEscape(point, max_iterations);
-			let colour = colourMapping.apply(it, max_iterations);
-			colour_row.push(colour);
+			if(colourMapping.apply.length == 2) {
+				let it = iterationsToEscape(point, maxIterations);
+				let colour = colourMapping.apply(it, maxIterations);
+				colour_row.push(colour);
+			} else {
+				let [it, z_it] = escapeTime(point, maxIterations);
+				let colour = colourMapping.apply(it, maxIterations, z_it);
+				colour_row.push(colour);
+			}
 		});
 		colours.push(colour_row);
 	});

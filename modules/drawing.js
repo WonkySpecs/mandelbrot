@@ -34,11 +34,31 @@ function drawPoints(point_colours, canvas) {
 	ctx.putImageData(imageData, 0, 0);
 }
 
-var ColourMapper = (function() {
-	return {
-		apply: function(iterations, max_iterations) {
-			let colour = iterations / max_iterations * 255;
-			return [colour, colour, colour];
+var ColourMapper = function(algorithmName) {
+	var histogram = function(iterations, maxIterations) {
+		let colour = iterations / maxIterations * 255;
+		return [colour, colour, colour];
+	}
+
+	var smooth = function(iterations, maxIterations, finalZ) {
+		let colour = iterations / maxIterations * 255;
+		console.log(finalZ);
+		return [colour, colour, colour];
+	}
+
+	function selectAlgorithm(algorithmName) {
+		switch(algorithmName) {
+			case 'histogram':
+				return histogram;
+			case 'smooth':
+				return smooth;
+			default:
+				throw "'" + algorithmName + "' is not a valid algorithm for colour mapper";
 		}
+	}
+
+	const algorithm = selectAlgorithm(algorithmName);
+	return {
+		apply: algorithm,
 	};
-})();
+}
