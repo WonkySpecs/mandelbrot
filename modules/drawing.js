@@ -64,7 +64,6 @@ var ColourMapper = function(algorithmName) {
 			coloursMap.push(255 * (tempCount + count) / total);
 			tempCount += count;
 		});
-		console.log(coloursMap);
 
 		let colours = [];
 		escapeTimes.forEach(function(timesRow) {
@@ -84,13 +83,15 @@ var ColourMapper = function(algorithmName) {
 		escapeTimes.forEach(function(timesRow) {
 			let colourRow = [];
 			timesRow.forEach(function([escapeTime, finalZ]) {
-				let modulus = Math.sqrt(finalZ[0] ** 2 + finalZ[1] ** 2);
-				let mu = escapeTime - Math.log(Math.log(modulus)) / Math.log(2.0);
-				if(mu > maxMu) {
-					maxMu = mu;
-					console.log(maxMu);
+				let colour = 0;
+				if(escapeTime == maxIterations) {
+					colour = 0;
+				} else {
+					let logMod = Math.log(finalZ[0] ** 2 + finalZ[1] ** 2) / 2;
+					let mu = Math.log(logMod / Math.log(2)) / Math.log(2);
+					let scaledEscapeTime = escapeTime + 1 - mu;
+					colour = 255 - scaledEscapeTime / maxIterations * 255;
 				}
-				let colour = escapeTime / maxIterations * 255;
 				colourRow.push([colour, colour, colour]);
 			});
 			colours.push(colourRow);
