@@ -2,17 +2,31 @@
 
 <html lang="en">
 <head>
-  <meta charset="utf-8">
+	<meta charset="utf-8">
 
-  <title>Mandelbrot</title>
-  <meta author="Will Taylor" name="Experimenting with the Canvas API" content="Mandelbrot">
+	<title>Mandelbrot</title>
+	<meta author="Will Taylor" name="Experimenting with the Canvas API" content="Mandelbrot">
 
-  <link rel="stylesheet" href="css/styles.css?v=1.0">
+	<link rel="stylesheet" href="css/styles.css?v=1.0">
 
 </head>
 
 <body>
-  <canvas id="canvas" width="1440px" height="900px"></canvas>
-  <script type="module" src="main.js"></script>
+  <canvas id="canvas" width="1200px" height="720px"></canvas>
+	<div id="positionControls">
+		<div id="center">
+			<p>Center coordinates:</p>
+			<label for="centerXInput">X (-2 - 1):</label>
+			<input type="number" id="centerXInput" min="-2" max="1">
+			<label for="centerYInput">Y (-1 - 1):</label>
+			<input type="number" id="centerYInput" min="-1" max="1">
+		</div>
+		<div id="zoom">
+			<label for="zoomInput">Zoom ( > 0 ):</label>
+			<input type="number" id="zoomInput" min="0">
+		</div>
+		<button id="redrawBtn">Redraw</button>
+	</div>
+	<script type="module" src="main.js"></script>
 </body>
 </html>

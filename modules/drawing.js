@@ -85,14 +85,14 @@ var ColourMapper = function(algorithmName) {
 			timesRow.forEach(function([escapeTime, finalZ]) {
 				let colour = 0;
 				if(escapeTime == maxIterations) {
-					colour = 0;
+					colourRow.push([0, 0, 0]);
 				} else {
 					let logMod = Math.log(finalZ[0] ** 2 + finalZ[1] ** 2) / 2;
 					let mu = Math.log(logMod / Math.log(2)) / Math.log(2);
 					let scaledEscapeTime = escapeTime + 1 - mu;
-					colour = 255 - scaledEscapeTime / maxIterations * 255;
+					colour = scaledEscapeTime / maxIterations * 255;
+					colourRow.push([255 - colour, 255 - colour, 255 - colour]);
 				}
-				colourRow.push([colour, colour, colour]);
 			});
 			colours.push(colourRow);
 		});
