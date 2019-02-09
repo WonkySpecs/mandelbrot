@@ -35,12 +35,42 @@ function drawPoints(point_colours, canvas) {
 }
 
 var ColourMapper = function(algorithmName) {
-	var histogram = function(escapeTimes, maxIterations) {
+	var basic = function(escapeTimes, maxIterations) {
 		let colours = [];
 		escapeTimes.forEach(function(timesRow) {
 			let colourRow = [];
-			timesRow.forEach(function([escapeTime, finalZ]) {
+			timesRow.forEach(function([escapeTime, _]) {
 				let colour = escapeTime / maxIterations * 255;
+				colourRow.push([colour, colour, colour]);
+			});
+			colours.push(colourRow);
+		});
+		return colours;
+	}
+
+	var histogram = function(escapeTimes, maxIterations) {
+		let histogram = [];
+		histogram.length = maxIterations;
+		histogram.fill(0);
+		escapeTimes.forEach(function(timesRow) {
+			timesRow.forEach(function([escapeTime, _]) {
+				histogram[escapeTime - 1] += 1;
+			});
+		});
+		const total = histogram.reduce((x, y) => x + y, 0);
+		let coloursMap = [];
+		let tempCount = 0;
+		histogram.forEach(function(count) {
+			coloursMap.push(255 * (tempCount + count) / total);
+			tempCount += count;
+		});
+		console.log(coloursMap);
+
+		let colours = [];
+		escapeTimes.forEach(function(timesRow) {
+			let colourRow = [];
+			timesRow.forEach(function([escapeTime, _]) {
+				let colour = coloursMap[escapeTime - 1];
 				colourRow.push([colour, colour, colour]);
 			});
 			colours.push(colourRow);
@@ -50,9 +80,16 @@ var ColourMapper = function(algorithmName) {
 
 	var smooth = function(escapeTimes, maxIterations) {
 		let colours = [];
+		let maxMu = 0;
 		escapeTimes.forEach(function(timesRow) {
 			let colourRow = [];
 			timesRow.forEach(function([escapeTime, finalZ]) {
+				let modulus = Math.sqrt(finalZ[0] ** 2 + finalZ[1] ** 2);
+				let mu = escapeTime - Math.log(Math.log(modulus)) / Math.log(2.0);
+				if(mu > maxMu) {
+					maxMu = mu;
+					console.log(maxMu);
+				}
 				let colour = escapeTime / maxIterations * 255;
 				colourRow.push([colour, colour, colour]);
 			});
@@ -63,8 +100,10 @@ var ColourMapper = function(algorithmName) {
 
 	function selectAlgorithm(algorithmName) {
 		switch(algorithmName) {
+			case 'basic':
+				return basic;
 			case 'histogram':
-				return histogram;
+				return histogram
 			case 'smooth':
 				return smooth;
 			default:
