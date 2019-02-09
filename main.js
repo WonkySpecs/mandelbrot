@@ -8,5 +8,7 @@ const MAX_Y = 1.1
 
 const canvas = document.getElementById('canvas');
 const scaledPoints = drawing.scalePixelListToAxes([canvas.width, canvas.height], [MIN_X, MAX_X, MIN_Y, MAX_Y]);
-const pointColours = mandelbrot.calcPointColours(scaledPoints, drawing.ColourMapper('smooth'));
+let maxIterations = 100;
+const escapeTimes = mandelbrot.calcEscapeTimes(scaledPoints, maxIterations);
+const pointColours = drawing.ColourMapper('histogram').apply(escapeTimes, maxIterations);
 drawing.drawPoints(pointColours, canvas);

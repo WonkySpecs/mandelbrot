@@ -35,15 +35,30 @@ function drawPoints(point_colours, canvas) {
 }
 
 var ColourMapper = function(algorithmName) {
-	var histogram = function(iterations, maxIterations) {
-		let colour = iterations / maxIterations * 255;
-		return [colour, colour, colour];
+	var histogram = function(escapeTimes, maxIterations) {
+		let colours = [];
+		escapeTimes.forEach(function(timesRow) {
+			let colourRow = [];
+			timesRow.forEach(function([escapeTime, finalZ]) {
+				let colour = escapeTime / maxIterations * 255;
+				colourRow.push([colour, colour, colour]);
+			});
+			colours.push(colourRow);
+		});
+		return colours;
 	}
 
-	var smooth = function(iterations, maxIterations, finalZ) {
-		let colour = iterations / maxIterations * 255;
-		console.log(finalZ);
-		return [colour, colour, colour];
+	var smooth = function(escapeTimes, maxIterations) {
+		let colours = [];
+		escapeTimes.forEach(function(timesRow) {
+			let colourRow = [];
+			timesRow.forEach(function([escapeTime, finalZ]) {
+				let colour = escapeTime / maxIterations * 255;
+				colourRow.push([colour, colour, colour]);
+			});
+			colours.push(colourRow);
+		});
+		return colours;
 	}
 
 	function selectAlgorithm(algorithmName) {
