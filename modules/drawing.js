@@ -34,7 +34,7 @@ function drawPoints(point_colours, canvas) {
 	ctx.putImageData(imageData, 0, 0);
 }
 
-var ColourMapper = function(algorithmName) {
+var ColourMapper = function(algorithmName, noEscapeColour) {
 	var basic = function(escapeTimes, maxIterations) {
 		let colours = [];
 		escapeTimes.forEach(function(timesRow) {
@@ -85,7 +85,7 @@ var ColourMapper = function(algorithmName) {
 			timesRow.forEach(function([escapeTime, finalZ]) {
 				let colour = 0;
 				if(escapeTime == maxIterations) {
-					colourRow.push([0, 0, 0]);
+					colourRow.push(c);
 				} else {
 					let logMod = Math.log(finalZ[0] ** 2 + finalZ[1] ** 2) / 2;
 					let mu = Math.log(logMod / Math.log(2)) / Math.log(2);
@@ -113,6 +113,7 @@ var ColourMapper = function(algorithmName) {
 	}
 
 	const algorithm = selectAlgorithm(algorithmName);
+	const c = noEscapeColour;
 	return {
 		apply: algorithm,
 	};
