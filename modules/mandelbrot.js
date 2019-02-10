@@ -1,4 +1,4 @@
-export { EscapeTime }
+export { EscapeTime };
 
 var EscapeTime = function(maxIterations, escapeRadius) {
 	var escapeTime = function(point) {
