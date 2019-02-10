@@ -1,5 +1,6 @@
 import * as drawing from "./modules/drawing.js";
 import * as mandelbrot from "./modules/mandelbrot.js";
+import { hexStringToRgb } from "./modules/utils.js"
 
 const originalWidth = 3;
 const originalHeight = 2;
@@ -61,7 +62,7 @@ var Inputs = function() {
 		}
 
 		noEscapeColourInput.onchange = function(e) {
-			noEscapeColour = hexToRgb(noEscapeColourInput.value);
+			noEscapeColour = hexStringToRgb(noEscapeColourInput.value);
 			Main.colourAndDraw(noEscapeColour, 123, 321);
 		}
 	}
@@ -77,12 +78,3 @@ var Inputs = function() {
 
 Inputs.initialize();
 redrawBtn.click();
-
-function hexToRgb(hex) {
-	var bigint = parseInt(hex.substring(1), 16);
-	var r = (bigint >> 16) & 255;
-	var g = (bigint >> 8) & 255;
-	var b = bigint & 255;
-
-	return [r, g, b];
-}
