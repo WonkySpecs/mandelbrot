@@ -9,7 +9,7 @@ function scalePixelListToAxes(canvas_size, axes_size) {
 	for (var y = 0; y < max_pixel_y; y++) {
 		let row = [];
 		for (var x = 0; x < max_pixel_x; x++) {
-			row.push([(x / max_pixel_x) * axes_width + min_axes_x, (y / max_pixel_y) * axes_height + min_axes_y]);
+			row.push([(x / max_pixel_x) * axes_width + min_axes_x, max_axes_y - (y / max_pixel_y) * axes_height]);
 		}
 		scaledPixels.push(row)
 	}
