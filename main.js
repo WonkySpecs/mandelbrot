@@ -14,15 +14,15 @@ var Main = function() {
 	}
 
 	return {
-		colourAndDraw: function(noEscapeColour, c1, c2) {
+		colourAndDraw: function(colours) {
 			const canvas = document.getElementById('canvas');
-			const pointColours = drawing.ColourMapper('smooth', noEscapeColour).apply(escapeTimes, maxIterations);
+			const pointColours = drawing.ColourMapper('smooth', colours).apply(escapeTimes, maxIterations);
 			drawing.drawPoints(pointColours, canvas);
 		},
 
-		rerenderAll: function([minX, maxX, minY, maxY], [noEscapeColour, c1, c2]) {
+		rerenderAll: function([minX, maxX, minY, maxY], colours) {
 			escapeTimes = calculatePoints(minX, maxX, minY, maxY);
-			this.colourAndDraw(noEscapeColour, c1, c2);
+			this.colourAndDraw(colours);
 		}
 	};
 }();

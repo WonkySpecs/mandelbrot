@@ -34,7 +34,7 @@ function drawPoints(point_colours, canvas) {
 	ctx.putImageData(imageData, 0, 0);
 }
 
-var ColourMapper = function(algorithmName, noEscapeColour) {
+var ColourMapper = function(algorithmName, colours) {
 	var basic = function(escapeTimes, maxIterations) {
 		let colours = [];
 		escapeTimes.forEach(function(timesRow) {
@@ -85,18 +85,29 @@ var ColourMapper = function(algorithmName, noEscapeColour) {
 			timesRow.forEach(function([escapeTime, finalZ]) {
 				let colour = 0;
 				if(escapeTime == maxIterations) {
-					colourRow.push(c);
+					colourRow.push(noEscapeColour);
 				} else {
 					let logMod = Math.log(finalZ[0] ** 2 + finalZ[1] ** 2) / 2;
 					let mu = Math.log(logMod / Math.log(2)) / Math.log(2);
 					let scaledEscapeTime = escapeTime + 1 - mu;
-					colour = scaledEscapeTime / maxIterations * 255;
-					colourRow.push([255 - colour, 255 - colour, 255 - colour]);
+					colourRow.push(interpolateColour(scaledEscapeTime, maxIterations));
 				}
 			});
 			colours.push(colourRow);
 		});
 		return colours;
+	}
+
+	function interpolateColour(value, maxValue) {
+		return earliestEscapeColour.map(function(item, index) {
+			let fractionalColour = Math.floor(value / maxValue * colourDiffs[index]);
+			if(item < latestEscapeColour[index]) {
+				return item + fractionalColour;
+			}
+			else {
+				return item - fractionalColour;
+			}
+		});
 	}
 
 	function selectAlgorithm(algorithmName) {
@@ -113,7 +124,11 @@ var ColourMapper = function(algorithmName, noEscapeColour) {
 	}
 
 	const algorithm = selectAlgorithm(algorithmName);
-	const c = noEscapeColour;
+	const [noEscapeColour, earliestEscapeColour, latestEscapeColour] = colours;
+	console.log(earliestEscapeColour);
+	const colourDiffs = earliestEscapeColour.map(function(item, index) {
+		return Math.abs(item - latestEscapeColour[index]);
+	});
 	return {
 		apply: algorithm,
 	};

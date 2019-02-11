@@ -15,11 +15,13 @@ let calcSizesFromInputs = function() {
 
 let [axesLeft, axesRight, axesTop, axesBottom] = calcSizesFromInputs();
 let noEscapeColour = [0, 0, 0];
+let earliestEscapeColour = [48, 48, 48];
+let latestEscapeColour = [255, 255, 255];
 
 let bindEvents = function(main) {
 	redrawBtn.onclick = function() {
 		[axesLeft, axesRight, axesTop, axesBottom] = calcSizesFromInputs();
-		main.rerenderAll([axesLeft, axesRight, axesTop, axesBottom], [noEscapeColour, undefined, undefined]);
+		main.rerenderAll([axesLeft, axesRight, axesTop, axesBottom], [noEscapeColour, earliestEscapeColour, latestEscapeColour]);
 	};
 
 	canvas.onmousemove = function(e) {
@@ -38,7 +40,17 @@ let bindEvents = function(main) {
 
 	noEscapeColourInput.onchange = function(e) {
 		noEscapeColour = hexStringToRgb(noEscapeColourInput.value);
-		main.colourAndDraw(noEscapeColour, undefined, undefined);
+		main.colourAndDraw([noEscapeColour, earliestEscapeColour, latestEscapeColour]);
+	}
+
+	earliestEscapeColourInput.onchange = function(e) {
+		earliestEscapeColour = hexStringToRgb(earliestEscapeColourInput.value);
+		main.colourAndDraw([noEscapeColour, earliestEscapeColour, latestEscapeColour]);
+	}
+
+	latestEscapeColourInput.onchange = function(e) {
+		latestEscapeColour = hexStringToRgb(latestEscapeColourInput.value);
+		main.colourAndDraw([noEscapeColour, earliestEscapeColour, latestEscapeColour]);
 	}
 }
 
