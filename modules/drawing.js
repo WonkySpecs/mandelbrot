@@ -100,13 +100,8 @@ var ColourMapper = function(algorithmName, colours) {
 
 	function interpolateColour(value, maxValue) {
 		return earliestEscapeColour.map(function(item, index) {
-			let fractionalColour = Math.floor(value / maxValue * colourDiffs[index]);
-			if(item < latestEscapeColour[index]) {
-				return item + fractionalColour;
-			}
-			else {
-				return item - fractionalColour;
-			}
+			let fractionalColour = value / maxValue * colourDiffs[index];
+			return item + fractionalColour
 		});
 	}
 
@@ -125,9 +120,8 @@ var ColourMapper = function(algorithmName, colours) {
 
 	const algorithm = selectAlgorithm(algorithmName);
 	const [noEscapeColour, earliestEscapeColour, latestEscapeColour] = colours;
-	console.log(earliestEscapeColour);
 	const colourDiffs = earliestEscapeColour.map(function(item, index) {
-		return Math.abs(item - latestEscapeColour[index]);
+		return latestEscapeColour[index] - item;
 	});
 	return {
 		apply: algorithm,
