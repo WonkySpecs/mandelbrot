@@ -34,18 +34,16 @@ function drawPoints(point_colours, canvas) {
 	ctx.putImageData(imageData, 0, 0);
 }
 
-var ColourMapper = function(algorithmName, colours) {
-	var basic = function(escapeTimes, maxIterations) {
-		let colours = [];
-		escapeTimes.forEach(function(timesRow) {
-			let colourRow = [];
-			timesRow.forEach(function([escapeTime, _]) {
-				let colour = escapeTime / maxIterations * 255;
-				colourRow.push([colour, colour, colour]);
-			});
-			colours.push(colourRow);
-		});
-		return colours;
+var ColourMapper = function(algorithm) {
+	return {
+		apply: algorithm,
+	};
+}
+
+var ColourMappingAlgorithm = function(algorithmName, colours) {
+	var basic = function([escapeTime, _], maxIterations) {
+		let colour = escapeTime / maxIterations * 255;
+		return [colour, colour, colour];
 	}
 
 	var histogram = function(escapeTimes, maxIterations) {
@@ -77,25 +75,16 @@ var ColourMapper = function(algorithmName, colours) {
 		return colours;
 	}
 
-	var smooth = function(escapeTimes, maxIterations) {
-		let colours = [];
-		let maxMu = 0;
-		escapeTimes.forEach(function(timesRow) {
-			let colourRow = [];
-			timesRow.forEach(function([escapeTime, finalZ]) {
-				let colour = 0;
-				if(escapeTime == maxIterations) {
-					colourRow.push(noEscapeColour);
-				} else {
-					let logMod = Math.log(finalZ[0] ** 2 + finalZ[1] ** 2) / 2;
-					let mu = Math.log(logMod / Math.log(2)) / Math.log(2);
-					let scaledEscapeTime = escapeTime + 1 - mu;
-					colourRow.push(interpolateColour(scaledEscapeTime, maxIterations));
-				}
-			});
-			colours.push(colourRow);
-		});
-		return colours;
+	var smooth = function([escapeTime, finalZ], maxIterations) {
+		let colour = 0;
+		if(escapeTime == maxIterations) {
+			return noEscapeColour;
+		} else {
+			let logMod = Math.log(finalZ[0] ** 2 + finalZ[1] ** 2) / 2;
+			let mu = Math.log(logMod / Math.log(2)) / Math.log(2);
+			let scaledEscapeTime = escapeTime + 1 - mu;
+			return interpolateColour(scaledEscapeTime, maxIterations);
+		}
 	}
 
 	function interpolateColour(value, maxValue) {
@@ -103,6 +92,23 @@ var ColourMapper = function(algorithmName, colours) {
 			let fractionalColour = value / maxValue * colourDiffs[index];
 			return item + fractionalColour
 		});
+	}
+
+	const [noEscapeColour, earliestEscapeColour, latestEscapeColour] = colours;
+	const colourDiffs = earliestEscapeColour.map(function(item, index) {
+		return latestEscapeColour[index] - item;
+	});
+
+	var algorithm = function(escapeTimes, maxIterations) {
+		let colours = [];
+		escapeTimes.forEach(function(timesRow) {
+			let colourRow = [];
+			timesRow.forEach(function(escapeInfo) {
+				colourRow.push(calculatePixelColour(escapeInfo, maxIterations));
+			});
+			colours.push(colourRow);
+		});
+		return colours;
 	}
 
 	function selectAlgorithm(algorithmName) {
@@ -118,14 +124,8 @@ var ColourMapper = function(algorithmName, colours) {
 		}
 	}
 
-	const algorithm = selectAlgorithm(algorithmName);
-	const [noEscapeColour, earliestEscapeColour, latestEscapeColour] = colours;
-	const colourDiffs = earliestEscapeColour.map(function(item, index) {
-		return latestEscapeColour[index] - item;
-	});
-	return {
-		apply: algorithm,
-	};
+	const calculatePixelColour = selectAlgorithm(algorithmName);
+	return algorithm;
 }
 
 var ColourMapperBuilder = function() {
@@ -141,7 +141,7 @@ var ColourMapperBuilder = function() {
 			return this;
 		},
 		build: function() {
-			return ColourMapper(algName, cols);
+			return ColourMapper(ColourMappingAlgorithm(algName, cols));
 		}
 	}
 }
