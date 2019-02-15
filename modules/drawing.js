@@ -102,7 +102,7 @@ var ColourMappingAlgorithm = function(algorithmName, colours) {
 
 var ColourMapperBuilder = function() {
 	let algName = "smooth";
-	let cols = [];
+	let cols = [[0, 0, 0], [0, 0, 0], [255, 255, 255]];
 	return {
 		algorithmName: function(an) {
 			algName = an;
