@@ -1,4 +1,4 @@
-export { scalePixelListToAxes, drawPoints, ColourMapper };
+export { scalePixelListToAxes, drawPoints, ColourMapperBuilder };
 
 function scalePixelListToAxes(canvas_size, axes_size) {
 	var [max_pixel_x, max_pixel_y] = canvas_size;
@@ -126,4 +126,22 @@ var ColourMapper = function(algorithmName, colours) {
 	return {
 		apply: algorithm,
 	};
+}
+
+var ColourMapperBuilder = function() {
+	let algName = "smooth";
+	let cols = [];
+	return {
+		algorithmName: function(an) {
+			algName = an;
+			return this;
+		},
+		colours: function(c) {
+			cols = c;
+			return this;
+		},
+		build: function() {
+			return ColourMapper(algName, cols);
+		}
+	}
 }

@@ -11,13 +11,22 @@ var Main = function() {
 		const canvas = document.getElementById('canvas');
 		const scaledPoints = drawing.scalePixelListToAxes([canvas.width, canvas.height], [minX, maxX, minY, maxY]);
 		let escapeRadius = 100;
-		return mandelbrot.EscapeTimeCalculator(maxIterations, escapeRadius).applyTo(scaledPoints);
+		let escapeTimeCalculator = mandelbrot.EscapeTimeCalculatorBuilder()
+											 .maxIterations(maxIterations)
+											 .escapeRadius(escapeRadius)
+											 .build();
+		return escapeTimeCalculator.applyTo(scaledPoints);
 	}
 
 	return {
 		colourAndDraw: function(colours) {
 			const canvas = document.getElementById('canvas');
-			const pointColours = drawing.ColourMapper('smooth', colours).apply(escapeTimes, maxIterations);
+			
+			let colourMapper = drawing.ColourMapperBuilder()
+									  .algorithmName('smooth')
+									  .colours(colours)
+									  .build();
+			const pointColours = colourMapper.apply(escapeTimes, maxIterations);
 			drawing.drawPoints(pointColours, canvas);
 		},
 

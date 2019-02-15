@@ -1,4 +1,4 @@
-export { EscapeTimeCalculator };
+export { EscapeTimeCalculatorBuilder };
 
 var EscapeTimeCalculator = function(maxIterations, escapeRadius) {
 	var escapeTime = function(point) {
@@ -42,3 +42,22 @@ var EscapeTimeCalculator = function(maxIterations, escapeRadius) {
 		applyTo: calcEscapeTimes
 	}
 }
+
+var EscapeTimeCalculatorBuilder = function() {
+	var maxIter = 50;
+	var escapeR = 50;
+	var fPower = 2;		//Unused until I figure out how to implement complex exponentiation properly
+	return {
+		maxIterations: function(mi) {
+			maxIter = mi;
+			return this;
+		},
+		escapeRadius: function(er) {
+			escapeR = er;
+			return this;
+		},
+		build: function() {
+			return EscapeTimeCalculator(maxIter, escapeR);
+		}
+	};
+};
