@@ -42,8 +42,10 @@ var ColourMapper = function(algorithm) {
 
 var ColourMappingAlgorithm = function(algorithmName, colours) {
 	var basic = function([escapeTime, _], maxIterations) {
-		let colour = escapeTime / maxIterations * 255;
-		return [colour, colour, colour];
+		if(escapeTime == maxIterations) {
+			return noEscapeColour;
+		}
+		return interpolateColour(escapeTime, maxIterations);
 	}
 
 	var smooth = function([escapeTime, finalZ], maxIterations) {
