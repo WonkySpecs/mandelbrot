@@ -42,22 +42,23 @@ var ColourMapper = function(algorithm) {
 
 var ColourMappingAlgorithm = function(algorithmName, colours) {
 	var basic = function([escapeTime, _], maxIterations) {
-		if(escapeTime == maxIterations) {
-			return noEscapeColour;
-		}
-		return interpolateColour(escapeTime, maxIterations);
+		return noEscape(escapeTime, maxIterations) || interpolateColour(escapeTime, maxIterations);
 	}
 
 	var smooth = function([escapeTime, finalZ], maxIterations) {
-		let colour = 0;
-		if(escapeTime == maxIterations) {
-			return noEscapeColour;
-		} else {
+		return noEscape(escapeTime, maxIterations) || function() {
 			let logMod = Math.log(finalZ[0] ** 2 + finalZ[1] ** 2) / 2;
 			let mu = Math.log(logMod / Math.log(2)) / Math.log(2);
 			let scaledEscapeTime = escapeTime + 1 - mu;
 			return interpolateColour(scaledEscapeTime, maxIterations);
+		}();
+	}
+
+	function noEscape(escapeTime, maxIterations) {
+		if(escapeTime == maxIterations) {
+			return noEscapeColour;
 		}
+		return false;
 	}
 
 	function interpolateColour(value, maxValue) {
