@@ -1,6 +1,6 @@
-export { EscapeTime };
+export { EscapeTimeCalculator };
 
-var EscapeTime = function(maxIterations, escapeRadius) {
+var EscapeTimeCalculator = function(maxIterations, escapeRadius) {
 	var escapeTime = function(point) {
 		let counter = 0;
 		let r = point[0];
@@ -39,6 +39,6 @@ var EscapeTime = function(maxIterations, escapeRadius) {
 		return times;
 	}
 	return {
-		calculate: calcEscapeTimes
+		applyTo: calcEscapeTimes
 	}
 }

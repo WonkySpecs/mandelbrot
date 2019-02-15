@@ -21,7 +21,7 @@ let latestEscapeColour = [255, 255, 255];
 let bindEvents = function(main) {
 	redrawBtn.onclick = function() {
 		[axesLeft, axesRight, axesTop, axesBottom] = calcSizesFromInputs();
-		main.rerenderAll([axesLeft, axesRight, axesTop, axesBottom], [noEscapeColour, earliestEscapeColour, latestEscapeColour]);
+		main.rerender([axesLeft, axesRight, axesTop, axesBottom], [noEscapeColour, earliestEscapeColour, latestEscapeColour]);
 	};
 
 	canvas.onmousemove = function(e) {

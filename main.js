@@ -5,12 +5,13 @@ import * as inputs from "./modules/inputs.js";
 const maxIterations = 64
 
 var Main = function() {
+	//We keep escape times in state to allow recolouring without having to recalculate them
 	let escapeTimes = [];
-	let calculatePoints = function(minX, maxX, minY, maxY) {
+	let calculateEscapeTimes = function(minX, maxX, minY, maxY) {
 		const canvas = document.getElementById('canvas');
 		const scaledPoints = drawing.scalePixelListToAxes([canvas.width, canvas.height], [minX, maxX, minY, maxY]);
 		let escapeRadius = 100;
-		return mandelbrot.EscapeTime(maxIterations, escapeRadius).calculate(scaledPoints);
+		return mandelbrot.EscapeTimeCalculator(maxIterations, escapeRadius).applyTo(scaledPoints);
 	}
 
 	return {
@@ -20,8 +21,8 @@ var Main = function() {
 			drawing.drawPoints(pointColours, canvas);
 		},
 
-		rerenderAll: function([minX, maxX, minY, maxY], colours) {
-			escapeTimes = calculatePoints(minX, maxX, minY, maxY);
+		rerender: function([minX, maxX, minY, maxY], colours) {
+			escapeTimes = calculateEscapeTimes(minX, maxX, minY, maxY);
 			this.colourAndDraw(colours);
 		}
 	};
