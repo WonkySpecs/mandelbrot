@@ -46,35 +46,6 @@ var ColourMappingAlgorithm = function(algorithmName, colours) {
 		return [colour, colour, colour];
 	}
 
-	var histogram = function(escapeTimes, maxIterations) {
-		let histogram = [];
-		histogram.length = maxIterations;
-		histogram.fill(0);
-		escapeTimes.forEach(function(timesRow) {
-			timesRow.forEach(function([escapeTime, _]) {
-				histogram[escapeTime - 1] += 1;
-			});
-		});
-		const total = histogram.reduce((x, y) => x + y, 0);
-		let coloursMap = [];
-		let tempCount = 0;
-		histogram.forEach(function(count) {
-			coloursMap.push(255 * (tempCount + count) / total);
-			tempCount += count;
-		});
-
-		let colours = [];
-		escapeTimes.forEach(function(timesRow) {
-			let colourRow = [];
-			timesRow.forEach(function([escapeTime, _]) {
-				let colour = coloursMap[escapeTime - 1];
-				colourRow.push([colour, colour, colour]);
-			});
-			colours.push(colourRow);
-		});
-		return colours;
-	}
-
 	var smooth = function([escapeTime, finalZ], maxIterations) {
 		let colour = 0;
 		if(escapeTime == maxIterations) {
@@ -115,8 +86,6 @@ var ColourMappingAlgorithm = function(algorithmName, colours) {
 		switch(algorithmName) {
 			case 'basic':
 				return basic;
-			case 'histogram':
-				return histogram
 			case 'smooth':
 				return smooth;
 			default:
