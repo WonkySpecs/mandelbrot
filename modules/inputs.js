@@ -49,7 +49,7 @@ let bindEvents = function(main) {
 		if(colourInputs.length < 10) {
 			let newControl = buildColourInput(colourInputs.length, main.colourAndDraw);
 			const controlDiv = document.getElementById("colourControls");
-			controlDiv.insertBefore(newControl, addColourBtn);
+			controlDiv.insertBefore(newControl, earliestEscapeColour);
 			renameColourInputs();
 			colourInputs.push(newControl);
 		}
