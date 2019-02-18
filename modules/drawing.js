@@ -68,7 +68,7 @@ var ColourMappingAlgorithm = function(algorithmName, colours) {
 		});
 	}
 
-	const [noEscapeColour, earliestEscapeColour, latestEscapeColour] = colours;
+	const [noEscapeColour, latestEscapeColour, earliestEscapeColour] = colours;
 	const colourDiffs = earliestEscapeColour.map(function(item, index) {
 		return latestEscapeColour[index] - item;
 	});

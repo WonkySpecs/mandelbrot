@@ -14,15 +14,14 @@ let calcSizesFromInputs = function() {
 }
 
 let [axesLeft, axesRight, axesTop, axesBottom] = calcSizesFromInputs();
-let noEscapeColour = [0, 0, 0];
-let earliestEscapeColour = [48, 48, 48];
-let latestEscapeColour = [255, 255, 255];
-let colourInputs = [];
+let colourInputs = [document.getElementById("noEscapeColour"),
+					document.getElementById("latestEscapeColour"),
+					document.getElementById("earliestEscapeColour")];
 
 let bindEvents = function(main) {
 	redrawBtn.onclick = function() {
 		[axesLeft, axesRight, axesTop, axesBottom] = calcSizesFromInputs();
-		main.rerender([axesLeft, axesRight, axesTop, axesBottom], [noEscapeColour, earliestEscapeColour, latestEscapeColour]);
+		main.rerender([axesLeft, axesRight, axesTop, axesBottom], calculateColours());
 	};
 
 	canvas.onmousemove = function(e) {
@@ -39,26 +38,19 @@ let bindEvents = function(main) {
 		centerYInput.value = canvasMouseY.value;
 	}
 
-	noEscapeColourInput.onchange = function(e) {
-		noEscapeColour = hexStringToRgb(noEscapeColourInput.value);
-		main.colourAndDraw([noEscapeColour, earliestEscapeColour, latestEscapeColour]);
-	}
-
-	earliestEscapeColourInput.onchange = function(e) {
-		earliestEscapeColour = hexStringToRgb(earliestEscapeColourInput.value);
-		main.colourAndDraw([noEscapeColour, earliestEscapeColour, latestEscapeColour]);
-	}
-
-	latestEscapeColourInput.onchange = function(e) {
-		latestEscapeColour = hexStringToRgb(latestEscapeColourInput.value);
-		main.colourAndDraw([noEscapeColour, earliestEscapeColour, latestEscapeColour]);
-	}
+	const colourInputElements = document.querySelectorAll('input[type="color"]');
+	colourInputElements.forEach(function(element) {
+		element.onchange = function(event) {
+			main.colourAndDraw(calculateColours());
+		}
+	});
 
 	addColourBtn.onclick = function(e) {
 		if(colourInputs.length < 10) {
-			let newControl = buildColourInput(colourInputs.length);
+			let newControl = buildColourInput(colourInputs.length, main.colourAndDraw);
 			const controlDiv = document.getElementById("colourControls");
 			controlDiv.insertBefore(newControl, addColourBtn);
+			renameColourInputs();
 			colourInputs.push(newControl);
 		}
 	}
@@ -71,18 +63,25 @@ function initialize(main) {
 	bindEvents(main);
 }
 
-function buildColourInput(inputNumber) {
+function buildColourInput(inputNumber, callback) {
 	let label = document.createElement("label");
 	label.innerHTML = "Colour " + inputNumber + ":";
+
 	let input = document.createElement("input");
 	input.type = "color";
+	input.onchange = function(e) {
+		callback(calculateColours());
+	}
+
 	let deleteBtn = document.createElement("button");
 	deleteBtn.innerHTML = "-";
+
 	const parent = document.createElement("span")
 	parent.id = "colourInput" + inputNumber;
 	parent.appendChild(label);
 	parent.appendChild(input);
 	parent.appendChild(deleteBtn);
+
 	deleteBtn.onclick = function() {
 		removeColourInput(parent);
 		renameColourInputs()
@@ -93,7 +92,7 @@ function buildColourInput(inputNumber) {
 
 function removeColourInput(toRemove) {
 	let toRemoveIndex;
-	for(let i = 0; i < colourInputs.length; i++) {
+	for(let i = 3; i < colourInputs.length; i++) {
 		if(colourInputs[i].id === toRemove.id) {
 			toRemoveIndex = i;
 			break;
@@ -107,10 +106,17 @@ function removeColourInput(toRemove) {
 }
 
 function renameColourInputs() {
-	for(let i = 0; i < colourInputs.length; i++) {
+	for(let i = 3; i < colourInputs.length; i++) {
 		let control = colourInputs[i];
 		control.id = "colourInput" + i;
-		let label = control.childNodes[0];
+		let label = control.getElementsByTagName("label")[0];
 		label.innerHTML = "Colour " + i + ":";
 	}
+}
+
+function calculateColours() {
+	return colourInputs.map(function(control) {
+		let input = control.getElementsByTagName("input")[0];
+		return hexStringToRgb(input.value);
+	});
 }
