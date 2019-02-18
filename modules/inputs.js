@@ -17,6 +17,7 @@ let [axesLeft, axesRight, axesTop, axesBottom] = calcSizesFromInputs();
 let noEscapeColour = [0, 0, 0];
 let earliestEscapeColour = [48, 48, 48];
 let latestEscapeColour = [255, 255, 255];
+let colourInputs = [];
 
 let bindEvents = function(main) {
 	redrawBtn.onclick = function() {
@@ -52,6 +53,15 @@ let bindEvents = function(main) {
 		latestEscapeColour = hexStringToRgb(latestEscapeColourInput.value);
 		main.colourAndDraw([noEscapeColour, earliestEscapeColour, latestEscapeColour]);
 	}
+
+	addColourBtn.onclick = function(e) {
+		if(colourInputs.length < 10) {
+			let newControl = buildColourInput(colourInputs.length);
+			const controlDiv = document.getElementById("colourControls");
+			controlDiv.insertBefore(newControl, addColourBtn);
+			colourInputs.push(newControl);
+		}
+	}
 }
 
 function initialize(main) {
@@ -59,4 +69,48 @@ function initialize(main) {
 	centerYInput.value = 0;
 	zoomInput.value = 1;
 	bindEvents(main);
+}
+
+function buildColourInput(inputNumber) {
+	let label = document.createElement("label");
+	label.innerHTML = "Colour " + inputNumber + ":";
+	let input = document.createElement("input");
+	input.type = "color";
+	let deleteBtn = document.createElement("button");
+	deleteBtn.innerHTML = "-";
+	const parent = document.createElement("span")
+	parent.id = "colourInput" + inputNumber;
+	parent.appendChild(label);
+	parent.appendChild(input);
+	parent.appendChild(deleteBtn);
+	deleteBtn.onclick = function() {
+		removeColourInput(parent);
+		renameColourInputs()
+		parent.remove();
+	};
+	return parent;
+}
+
+function removeColourInput(toRemove) {
+	let toRemoveIndex;
+	for(let i = 0; i < colourInputs.length; i++) {
+		if(colourInputs[i].id === toRemove.id) {
+			toRemoveIndex = i;
+			break;
+		}
+	}
+	if(toRemoveIndex != -1) {
+		colourInputs.splice(toRemoveIndex, 1);
+	} else {
+		throw "Could not find colour input " + toRemove;
+	}
+}
+
+function renameColourInputs() {
+	for(let i = 0; i < colourInputs.length; i++) {
+		let control = colourInputs[i];
+		control.id = "colourInput" + i;
+		let label = control.childNodes[0];
+		label.innerHTML = "Colour " + i + ":";
+	}
 }

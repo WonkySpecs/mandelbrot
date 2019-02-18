@@ -52,5 +52,8 @@
 #colourControls {
 	display: flex;
 	flex-direction: column;
-	align-items: : center;
+}
+
+#addColourBtn {
+	margin-top: auto;
 }
