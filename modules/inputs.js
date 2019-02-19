@@ -2,19 +2,6 @@ export { initialize };
 
 import { hexStringToRgb } from "./utils.js"
 
-const originalWidth = 3;
-const originalHeight = 2;
-
-let calcSizesFromInputs = function() {
-	let cx = parseFloat(centerXInput.value);
-	let cy = parseFloat(centerYInput.value);
-	let width = originalWidth / parseFloat(zoomInput.value);
-	let height = originalHeight / parseFloat(zoomInput.value);
-	return [cx - width / 2, cx + width / 2, cy - height / 2, cy + height / 2];
-}
-
-let [axesLeft, axesRight, axesTop, axesBottom] = calcSizesFromInputs();
-
 let ColourInputHandler = function() {
 	const MAX_COLOURS = 10
 	const MIN_COLOURS = 3;
@@ -94,17 +81,41 @@ let ColourInputHandler = function() {
 	}
 }();
 
+
+let Sizes = function() {
+	const originalWidth = 3;
+	const originalHeight = 2;
+	let lastCalculatedAxesBounds;
+	let canvasRect = document.getElementById('canvas').getBoundingClientRect();
+
+	let calculateAxesBounds = function() {
+		let cx = parseFloat(centerXInput.value);
+		let cy = parseFloat(centerYInput.value);
+		let width = originalWidth / parseFloat(zoomInput.value);
+		let height = originalHeight / parseFloat(zoomInput.value);
+		lastCalculatedAxesBounds = [cx - width / 2, cx + width / 2, cy - height / 2, cy + height / 2]
+		return lastCalculatedAxesBounds;
+	}
+
+	return {
+		calculateAxesBounds: calculateAxesBounds,
+		getCachedAxesBounds: () => lastCalculatedAxesBounds,
+		getCanvasRect: () => canvasRect
+	};
+}();
+
+
 let bindEvents = function(main) {
 	redrawBtn.onclick = function() {
-		[axesLeft, axesRight, axesTop, axesBottom] = calcSizesFromInputs();
-		main.rerender([axesLeft, axesRight, axesTop, axesBottom], ColourInputHandler.calculateColours());
+		main.rerender({ axesBounds: Sizes.calculateAxesBounds(),
+						colours: ColourInputHandler.calculateColours()});
 	};
 
 	canvas.onmousemove = function(e) {
-		let canvas = document.getElementById('canvas');
-		let canvasRect = canvas.getBoundingClientRect();
+		let canvasRect = Sizes.getCanvasRect();
 		let mouseX = e.clientX - canvasRect.left;
 		let mouseY = e.clientY - canvasRect.top;
+		let [axesLeft, axesRight, axesTop, axesBottom] = Sizes.getCachedAxesBounds();
 		canvasMouseX.value = axesLeft + mouseX / canvas.width * (axesRight - axesLeft);
 		canvasMouseY.value = axesBottom + mouseY / canvas.height * (axesTop - axesBottom);
 	}
