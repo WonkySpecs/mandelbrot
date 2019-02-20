@@ -55,7 +55,7 @@ var ColourMappingAlgorithm = function(algorithmName, colours) {
 	}
 
 	function noEscape(escapeTime, maxIterations) {
-		if(escapeTime == maxIterations) {
+		if(escapeTime >= maxIterations) {
 			return noEscapeColour;
 		}
 		return false;
