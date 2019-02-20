@@ -14,44 +14,52 @@
 		<main id="mandelbrotContainer">
 			<canvas id="canvas" width="1200px" height="720px"></canvas>
 			<div id="controls">
-				<div id="positionControls">
-					<label for="centerXInput">X (-2 - 1):</label>
-					<input type="number" id="centerXInput" min="-2" max="1">
-
-					<label for="centerYInput">Y (-1 - 1):</label>
-					<input type="number" id="centerYInput" min="-1" max="1">
-
-					<label for="zoomInput">Zoom:</label>
-					<input type="number" id="zoomInput" min="0.1">
-
-					<button id="redrawBtn">Redraw</button>
-				</div>
-
 				<div id="algorithmControls">
-					Alg controls
+					<div id="positionControls">
+						<label for="centerXInput">X (-2 - 1):</label>
+						<input type="number" id="centerXInput" min="-2" max="1" step="any">
+
+						<label for="centerYInput">Y (-1 - 1):</label>
+						<input type="number" id="centerYInput" min="-1" max="1" step="any">
+
+						<label for="zoomInput">Zoom:</label>
+						<input type="number" id="zoomInput" step="any">
+					</div>
+
+					<div id="algorithmParameterControls">
+						<label for="maxIterationsInput">Max Iterations:</label>
+						<input type="number" id="maxIterationsInput" min="2">
+
+						<label for="escapeRadiusInput">Escape Radius:</label>
+						<input type="number" id="escapeRadiusInput" min="4">
+					</div>
 				</div>
+
+				<button id="redrawBtn">Redraw</button>
 
 				<div id="colourControls">
-					<span id="noEscapeColour">
-						<label for="noEscapeColourInput">Non-escaping points:</label>
-						<input type="color" id="noEscapeColourInput" value="#000000">
-					</span>
+					<div id="colourControlInputs">
+						<span id="noEscapeColour">
+							<label for="noEscapeColourInput">Non-escaping points:</label>
+							<input type="color" id="noEscapeColourInput" value="#000000">
+						</span>
 
-					<span id="latestEscapeColour">
-						<label for="latestEscapeColourInput">Latest escaping:</label>
-						<input type="color" id="latestEscapeColourInput" value="#FFFFFF">
-					</span>
+						<span id="latestEscapeColour">
+							<label for="latestEscapeColourInput">Latest escaping:</label>
+							<input type="color" id="latestEscapeColourInput" value="#FFFFFF">
+						</span>
 
-					<span id="earliestEscapeColour">
-						<label for="earliestEscapeColourInput">Earliest escaping:</label>
-						<input type="color" id="earliestEscapeColourInput" value="#303030">
-					</span>
+						<button id="addColourBtn">+</button>
 
-					<button id="addColourBtn">+</button>
-				</div>
+						<span id="earliestEscapeColour">
+							<label for="earliestEscapeColourInput">Earliest escaping:</label>
+							<input type="color" id="earliestEscapeColourInput" value="#303030">
+						</span>
+					</div>
 
-				<div id="colourAlgorithmControls">
-					Colour alg controls
+					<div id="colourAlgorithmControls">
+						Colour alg controls
+					</div>
 				</div>
 			</div>
 

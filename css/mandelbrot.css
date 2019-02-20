@@ -5,15 +5,6 @@
 	grid-column-gap: 0.8em;
 }
 
-#controls {
-	grid-column: span 1;
-	display: grid;
-	grid-template-columns: 1fr 1fr;
-	grid-template-rows: [algorithm] 2fr [colour] 7fr;
-	grid-column-gap: 0.5em;
-	grid-row-gap: 3em;
-}
-
 #canvas {
 	grid-column: main;
 	grid-row: main;
@@ -26,34 +17,68 @@
 	justify-content: flex-end;
 }
 
+#controls {
+	grid-column: controls;
+	display: flex;
+	flex-direction: column;
+}
+
+#algorithmControls {
+	display: grid;
+	grid-template-columns: [position] 1fr [parameters] 1fr;
+	column-gap: 1em;
+}
+
 #positionControls {
-	grid-column: 1;
-	grid-row: 1;
+	grid-column: position;
 	display: grid;
 	grid-template-columns: [labels] 1fr [inputs] 3fr;
 	grid-template-rows: repeat(auto-fit, 1fr);
 	align-items: center;
 }
 
-#positionControls label {
+#algorithmParameterControls {
+	grid-column: parameters;
+	display: grid;
+	grid-template-columns: [labels] 3fr [inputs] 5fr;
+	grid-template-rows: repeat(auto-fit, 1fr);
+	align-items: center;
+}
+
+#algorithmControls label {
 	grid-column: labels;
 	justify-self: end;
 }
 
-#positionControls input {
+#algorithmControls input {
 	grid-column: inputs;
 	width: auto;
 }
 
 #redrawBtn {
 	grid-column: span 2;
+	margin: 0.5em auto 2em auto;
+	width: 10em;
+	height:2em;
 }
 
 #colourControls {
+	display: grid;
+	grid-template-columns: [inputs] 1fr [algorithm] 1fr
+	column-gap: 1em;
+}
+
+#colourControlInputs {
+	grid-column: [inputs];
 	display: flex;
 	flex-direction: column;
 }
 
 #addColourBtn {
-	margin-top: auto;
+	margin: auto;
+	width: 3em;
+}
+
+#colourAlgorithmControls {
+	grid-column: algorithm;
 }

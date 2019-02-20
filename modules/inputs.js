@@ -12,7 +12,7 @@ let ColourInputHandler = function() {
 		newColourEvent: function(callback) {
 			if(colourInputControls.length < MAX_COLOURS) {
 				let newControl = buildColourInput(colourInputControls.length, callback);
-				const controlDiv = document.getElementById("colourControls");
+				const controlDiv = document.getElementById("colourControlInputs");
 				controlDiv.insertBefore(newControl, earliestEscapeColour);
 				renameColourInputs();
 				colourInputControls.push(newControl);
