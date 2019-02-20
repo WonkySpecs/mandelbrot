@@ -108,6 +108,8 @@ let Sizes = function() {
 let bindEvents = function(main) {
 	redrawBtn.onclick = function() {
 		main.rerender({ axesBounds: Sizes.calculateAxesBounds(),
+						maxIterations: maxIterationsInput.value,
+						escapeRadius: escapeRadiusInput.value,
 						colours: ColourInputHandler.calculateColours()});
 	};
 
@@ -128,16 +130,18 @@ let bindEvents = function(main) {
 	const colourInputElements = document.querySelectorAll('input[type="color"]');
 	colourInputElements.forEach(function(element) {
 		element.onchange = function(event) {
-			main.colourAndDraw(ColourInputHandler.calculateColours());
+			main.colourAndDraw(ColourInputHandler.calculateColours(), maxIterationsInput.value);
 		}
 	});
 
-	addColourBtn.onclick = (() => ColourInputHandler.newColourEvent(main.colourAndDraw));
+	addColourBtn.onclick = (() => ColourInputHandler.newColourEvent((colours) => main.colourAndDraw(colours, maxIterationsInput.value)));
 }
 
 function initialize(main) {
 	centerXInput.value = -0.5;
 	centerYInput.value = 0;
 	zoomInput.value = 1;
+	maxIterationsInput.value = 50;
+	escapeRadiusInput.value = 100;
 	bindEvents(main);
 }

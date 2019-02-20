@@ -2,24 +2,21 @@ import * as drawing from "./modules/drawing.js";
 import * as mandelbrot from "./modules/mandelbrot.js";
 import * as inputs from "./modules/inputs.js";
 
-const maxIterations = 64
-
 var Main = function() {
 	//We keep escape times in state to allow recolouring without having to recalculate them
 	let escapeTimes = [];
-	let calculateEscapeTimes = function(axesBounds) {
+	let calculateEscapeTimes = function(inputValues) {
 		const canvas = document.getElementById('canvas');
-		const scaledPoints = drawing.scalePixelListToAxes([canvas.width, canvas.height], axesBounds);
-		let escapeRadius = 100;
+		const scaledPoints = drawing.scalePixelListToAxes([canvas.width, canvas.height], inputValues.axesBounds);
 		let escapeTimeCalculator = mandelbrot.EscapeTimeCalculatorBuilder()
-											 .maxIterations(maxIterations)
-											 .escapeRadius(escapeRadius)
+											 .maxIterations(inputValues.maxIterations)
+											 .escapeRadius(inputValues.escapeRadius)
 											 .build();
 		return escapeTimeCalculator.applyTo(scaledPoints);
 	}
 
 	return {
-		colourAndDraw: function(colours) {
+		colourAndDraw: function(colours, maxIterations) {
 			const canvas = document.getElementById('canvas');
 			
 			let colourMapper = drawing.ColourMapperBuilder()
@@ -31,8 +28,8 @@ var Main = function() {
 		},
 
 		rerender: function(inputValues) {
-			escapeTimes = calculateEscapeTimes(inputValues.axesBounds);
-			this.colourAndDraw(inputValues.colours);
+			escapeTimes = calculateEscapeTimes(inputValues);
+			this.colourAndDraw(inputValues.colours, inputValues.maxIterations);
 		}
 	};
 }();
