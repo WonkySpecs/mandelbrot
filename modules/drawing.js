@@ -63,15 +63,12 @@ var ColourMappingAlgorithm = function(algorithmName, colours) {
 
 	function interpolateColour(value, maxValue) {
 		return earliestEscapeColour.map(function(item, index) {
-			let fractionalColour = value / maxValue * colourDiffs[index];
+			let fractionalColour = value / maxValue * colourDiffs[0][index];
 			return item + fractionalColour
 		});
 	}
 
-	const [noEscapeColour, latestEscapeColour, earliestEscapeColour] = colours;
-	const colourDiffs = earliestEscapeColour.map(function(item, index) {
-		return latestEscapeColour[index] - item;
-	});
+	const [noEscapeColour, earliestEscapeColour, [...colourDiffs]] = colours;
 
 	var algorithm = function(escapeTimes, maxIterations) {
 		let colours = [];
@@ -102,18 +99,65 @@ var ColourMappingAlgorithm = function(algorithmName, colours) {
 
 var ColourMapperBuilder = function() {
 	let algName = "smooth";
-	let cols = [[0, 0, 0], [0, 0, 0], [255, 255, 255]];
+	let colours = [];
 	return {
 		algorithmName: function(an) {
 			algName = an;
 			return this;
 		},
 		colours: function(c) {
-			cols = c;
+			colours = unpackColours(c);
 			return this;
 		},
 		build: function() {
-			return ColourMapper(ColourMappingAlgorithm(algName, cols));
+			return ColourMapper(ColourMappingAlgorithm(algName, colours));
 		}
+	}
+
+	function unpackColours(colours) {
+		let noEscape, earliestEscape, latestEscape;
+		let betweenColours = [];
+		for(let colour of colours) {
+			switch(colour.label) {
+				case "noEscapeColour":
+					noEscape = colour.value;
+					break;
+				case "earliestEscapeColour":
+					earliestEscape = colour.value;
+					break;
+				case "latestEscapeColour":
+					latestEscape = colour.value;
+					break;
+				default:
+					betweenColours.push([colour.label.substring(colour.label.length - 1), colour.value]);
+					break;
+			}
+		}
+		let orderedColours = orderBetweenColours(betweenColours);
+		orderedColours.splice(0, 0, latestEscape);
+		orderedColours.push(earliestEscape);
+		console.log(orderedColours);
+		return [noEscape, earliestEscape, calculateColourDiffs(orderedColours)];
+	}
+
+	function orderBetweenColours(betweenColours) {
+		let orderedColours = []
+		betweenColours.map(colour => {
+			let [label, value] = colour
+			orderedColours[parseInt(label) - 3] = value;
+		});
+		return orderedColours;
+	}
+
+	function calculateColourDiffs(betweenColours) {
+		const colourBandDiffs = [];
+		for(let i = betweenColours.length - 1; i > 0 ; i--) {
+			colourBandDiffs.push(
+				betweenColours[i].map(function(item, index) {
+					return betweenColours[i - 1][index] - item;
+				})
+			);
+		}
+		return colourBandDiffs;
 	}
 }

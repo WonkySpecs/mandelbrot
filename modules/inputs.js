@@ -76,7 +76,8 @@ let ColourInputHandler = function() {
 	function calculateColours() {
 		return colourInputControls.map(function(control) {
 			let input = control.getElementsByTagName("input")[0];
-			return hexStringToRgb(input.value);
+			const label = control.id;
+			return {label: control.id, value: hexStringToRgb(input.value)};
 		});
 	}
 }();
