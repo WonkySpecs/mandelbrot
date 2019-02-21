@@ -41,6 +41,8 @@ var ColourMapper = function(algorithm) {
 }
 
 var ColourMappingAlgorithm = function(algorithmName, colours) {
+	const [noEscapeColour, earliestEscapeColour, [...colourDiffs]] = colours;
+
 	var basic = function([escapeTime, _], maxIterations) {
 		return noEscape(escapeTime, maxIterations) || interpolateColour(escapeTime, maxIterations);
 	}
@@ -62,13 +64,26 @@ var ColourMappingAlgorithm = function(algorithmName, colours) {
 	}
 
 	function interpolateColour(value, maxValue) {
-		return earliestEscapeColour.map(function(item, index) {
-			let fractionalColour = value / maxValue * colourDiffs[0][index];
+		const maxFraction = value / maxValue;
+		const pointAlongLength = (maxFraction * colourDiffs.length); //Yes this is a trash name, I'm tired
+		const baseColourNum = Math.floor(pointAlongLength);
+		const baseColour = getBaseColour(baseColourNum);
+		const fracOfBit = (pointAlongLength - Math.floor(pointAlongLength)) / (Math.ceil(pointAlongLength) - pointAlongLength);
+		return baseColour.map(function(item, index) {
+			let fractionalColour = fracOfBit * colourDiffs[baseColourNum][index];
 			return item + fractionalColour
 		});
 	}
 
-	const [noEscapeColour, earliestEscapeColour, [...colourDiffs]] = colours;
+	function getBaseColour(baseColourNum) {
+		let colour = earliestEscapeColour;
+		for(let i = 0; i < baseColourNum; i++) {
+			colour = colour.map(function(item, index) {
+				return item + colourDiffs[i][index];
+			});
+		}
+		return colour;
+	}
 
 	var algorithm = function(escapeTimes, maxIterations) {
 		let colours = [];
@@ -136,7 +151,6 @@ var ColourMapperBuilder = function() {
 		let orderedColours = orderBetweenColours(betweenColours);
 		orderedColours.splice(0, 0, latestEscape);
 		orderedColours.push(earliestEscape);
-		console.log(orderedColours);
 		return [noEscape, earliestEscape, calculateColourDiffs(orderedColours)];
 	}
 
@@ -144,7 +158,7 @@ var ColourMapperBuilder = function() {
 		let orderedColours = []
 		betweenColours.map(colour => {
 			let [label, value] = colour
-			orderedColours[parseInt(label) - 3] = value;
+			orderedColours[parseInt(label)] = value;
 		});
 		return orderedColours;
 	}

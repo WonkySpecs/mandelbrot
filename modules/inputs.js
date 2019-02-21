@@ -4,14 +4,14 @@ import { hexStringToRgb } from "./utils.js"
 
 let ColourInputHandler = function() {
 	const MAX_COLOURS = 10
-	const MIN_COLOURS = 3;
+	const NUM_FIXED_COLOUR_INPUTS = 3;
 	let colourInputControls = [document.getElementById("noEscapeColour"),
 							   document.getElementById("latestEscapeColour"),
 							   document.getElementById("earliestEscapeColour")];
 	return {
 		newColourEvent: function(callback) {
 			if(colourInputControls.length < MAX_COLOURS) {
-				let newControl = buildColourInput(colourInputControls.length, callback);
+				let newControl = buildColourInput(colourInputControls.length - NUM_FIXED_COLOUR_INPUTS, callback);
 				const controlDiv = document.getElementById("colourControlInputs");
 				controlDiv.insertBefore(newControl, earliestEscapeColour);
 				renameColourInputs();
@@ -21,9 +21,9 @@ let ColourInputHandler = function() {
 		calculateColours: calculateColours
 	}
 
-	function buildColourInput(inputNumber, callback) {
+	function buildColourInput(inputIdNumber, callback) {
 		let label = document.createElement("label");
-		label.innerHTML = "Colour " + inputNumber + ":";
+		label.innerHTML = "Colour " + (inputIdNumber + 1) + ":";
 
 		let input = document.createElement("input");
 		input.type = "color";
@@ -35,7 +35,7 @@ let ColourInputHandler = function() {
 		deleteBtn.innerHTML = "-";
 
 		const parent = document.createElement("span")
-		parent.id = "colour" + inputNumber;
+		parent.id = "colour" + inputIdNumber;
 		parent.appendChild(label);
 		parent.appendChild(input);
 		parent.appendChild(deleteBtn);
@@ -51,7 +51,7 @@ let ColourInputHandler = function() {
 
 	function removeColourInput(toRemove) {
 		let toRemoveIndex;
-		for(let i = MIN_COLOURS; i < colourInputControls.length; i++) {
+		for(let i = NUM_FIXED_COLOUR_INPUTS; i < colourInputControls.length; i++) {
 			if(colourInputControls[i].id === toRemove.id) {
 				toRemoveIndex = i;
 				break;
@@ -65,11 +65,11 @@ let ColourInputHandler = function() {
 	}
 
 	function renameColourInputs() {
-		for(let i = MIN_COLOURS; i < colourInputControls.length; i++) {
+		for(let i = NUM_FIXED_COLOUR_INPUTS; i < colourInputControls.length; i++) {
 			let control = colourInputControls[i];
-			control.id = "colour" + i;
+			control.id = "colour" + (i - NUM_FIXED_COLOUR_INPUTS);
 			let label = control.getElementsByTagName("label")[0];
-			label.innerHTML = "Colour " + i + ":";
+			label.innerHTML = "Colour " + (i - NUM_FIXED_COLOUR_INPUTS + 1) + ":";
 		}
 	}
 
