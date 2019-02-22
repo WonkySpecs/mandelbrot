@@ -64,13 +64,12 @@ var ColourMappingAlgorithm = function(algorithmName, colours) {
 	}
 
 	function interpolateColour(value, maxValue) {
-		const maxFraction = value / maxValue;
-		const pointAlongLength = (maxFraction * colourDiffs.length); //Yes this is a trash name, I'm tired
-		const baseColourNum = Math.floor(pointAlongLength);
+		const fractionalColourNum = (value / maxValue * colourDiffs.length);
+		const baseColourNum = Math.floor(fractionalColourNum);
 		const baseColour = getBaseColour(baseColourNum);
-		const fracOfBit = (pointAlongLength - Math.floor(pointAlongLength)) / (Math.ceil(pointAlongLength) - pointAlongLength);
+		const fractionToNextColour = fractionalColourNum - baseColourNum;
 		return baseColour.map(function(item, index) {
-			let fractionalColour = fracOfBit * colourDiffs[baseColourNum][index];
+			let fractionalColour = fractionToNextColour * colourDiffs[baseColourNum][index];
 			return item + fractionalColour
 		});
 	}
