@@ -4,32 +4,41 @@ import * as inputs from "./modules/inputs.js";
 
 var Main = function() {
 	//We keep escape times in state to allow recolouring without having to recalculate them
+	let worker = new Worker('modules/mandelbrotWorker.js');
 	let escapeTimes = [];
-	let calculateEscapeTimes = function(inputValues) {
+	worker.onmessage = function(e) {
+		let [msgType, result, thingThatImGettingRidOf] = e.data
+		switch(msgType) {
+			case 'done':
+				console.log("Received done message");
+				escapeTimes = result;
+				console.log(thingThatImGettingRidOf);
+				colourAndDraw(thingThatImGettingRidOf.colours, thingThatImGettingRidOf.maxIterations);
+				break;
+			case 'progress':
+				//console.log("Progress: " + result);
+				break;
+			default:
+				throw Error("Invalid message type " + msgType + " recieved from mandelbrotWorker");
+		}
+	}
+
+	function colourAndDraw(colours, maxIterations) {
 		const canvas = document.getElementById('canvas');
-		const scaledPoints = drawing.scalePixelListToAxes([canvas.width, canvas.height], inputValues.axesBounds);
-		let escapeTimeCalculator = mandelbrot.EscapeTimeCalculatorBuilder()
-											 .maxIterations(inputValues.maxIterations)
-											 .escapeRadius(inputValues.escapeRadius)
-											 .build();
-		return escapeTimeCalculator.applyTo(scaledPoints);
+		let colourMapper = drawing.ColourMapperBuilder()
+								  .algorithmName('smooth')
+								  .colours(colours)
+								  .build();
+		const pointColours = colourMapper.apply(escapeTimes, maxIterations);
+		drawing.drawPoints(pointColours, canvas);
 	}
 
 	return {
-		colourAndDraw: function(colours, maxIterations) {
-			const canvas = document.getElementById('canvas');
-			
-			let colourMapper = drawing.ColourMapperBuilder()
-									  .algorithmName('smooth')
-									  .colours(colours)
-									  .build();
-			const pointColours = colourMapper.apply(escapeTimes, maxIterations);
-			drawing.drawPoints(pointColours, canvas);
-		},
-
+		colourAndDraw: colourAndDraw,
 		rerender: function(inputValues) {
-			escapeTimes = calculateEscapeTimes(inputValues);
-			this.colourAndDraw(inputValues.colours, inputValues.maxIterations);
+			const canvas = document.getElementById('canvas');
+			console.log(inputValues);
+			worker.postMessage([[canvas.width, canvas.height], inputValues]);
 		}
 	};
 }();
